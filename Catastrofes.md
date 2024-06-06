@@ -135,8 +135,57 @@ Este paso durara mucho por los recursos disponibles de cada computadora, por lo 
 
 *sport_train = sport_model.fit(train_X, train_label, batch_size=batch_size,epochs=epochs,verbose=1,validation_data=(valid_X, valid_label))*
 
+Una vez que se acabe el entrenamiento, hay que guardar la red, ya sea en formato h5 o keras
 
-Para crear 
+*sport_model.save("C:\\Users\\Leona\\Documents\\ProyectoCNN\\ProyectoCNN\\categorias\\red.h5")*
+*sport_model.save("C:\\Users\\Leona\\Documents\\ProyectoCNN\\ProyectoCNN\\categorias\\red1.keras")*
+
+
+## Evaluamos la red ##
+
+Ahora evaluamos la red que hemos entrenado:
+
+*test_eval = sport_model.evaluate(test_X, test_Y_one_hot, verbose=1)*
+
+*print('Test loss:', test_eval[0])*
+*print('Test accuracy:', test_eval[1])*
+
+*ccuracy = sport_train.history['accuracy']*
+*val_accuracy = sport_train.history['val_accuracy']*
+*loss = sport_train.history['loss']*
+*val_loss = sport_train.history['val_loss']*
+*epochs = range(len(accuracy))*
+*plt.plot(epochs, accuracy, 'bo', label='Training accuracy')*
+*plt.plot(epochs, val_accuracy, 'b', label='Validation accuracy')*
+*plt.title('Training and validation accuracy')*
+*plt.legend()*
+*plt.figure()*
+*plt.plot(epochs, loss, 'bo', label='Training loss')*
+*plt.plot(epochs, val_loss, 'b', label='Validation loss')*
+*plt.title('Training and validation loss')*
+*plt.legend()*
+*plt.show()*
+
+Esto nos genera una curva de evaluacion, tanto la acertividad del entrenamiento como lo malo.
+
+*predicted_classes=[]*
+*for predicted_sport in predicted_classes2:*
+    *predicted_classes.append(predicted_sport.tolist().index(max(predicted_sport)))*
+*predicted_classes=np.array(predicted_classes)*
+
+# Ahora si viene lo bueno #
+
+Lo siguiente sera correr el codigo que toma nuestro archivo h5 (en este caso) que es nuestro modelo
+
+*sport_model = load_model('C:\\Users\\Leona\\Downloads\\ProyectoCNN\\ProyectoCNN\\categorias\\red.h5')  # Sustituye con la ruta a tu modelo*
+
+
+*filenames = ['C:\\Users\\Leona\\Documents\\EJ3\\CCN-PRUEBAS\\inundacion3.jpg']*
+
+
+# Resultados#
+
+Estos son los siguientes ejemplos que han salido a base del modelo:
 
 ![Ejemplo de Asalto](./Images/asalto1.png)
 Este es un ejemplo de la identificación de la situación, la cual es un asalto
