@@ -10,35 +10,58 @@ Lo que aun mejora el modelo, es que se agrega la biblioteca Synaptic.js para cre
 
 Este juego ya esta completado para unicamente saltar o quedarse en el suelo dependiendo del aprendizaje por lo valores de Suelo,Aire y Distancia de la bala respecto al jugador.
 
-# Mejorando el Modelo #
+# Mejorando el Modelo por segunda vez #
 
-Se añadio mas funcionalidad para que sea un mayor reto en el juego que es generar otras 2 balas (3 en total) y añadiendo mas valores a la entrada y salida del arreglo de aprendizaje para la red neuronal:
+Luego de la primera dificultad de 3 balas, se aumenta la dificultad añadiendo aun mas entrada y menos salida, el objetivo es que el jugador ahora debe de esquivar una sola bala que rebota por toda la area definida de juego en donde se puede mover hacia 4 direcciones (Arriba, Abajo, Izquierda, Derecha).
 
-*Antes*
+Lo que ocasiona es que el modelo de aprendizaje de la red neuronal cambie:
+
+
+*Original*
 *Input' :  [despBala , velocidadBala],*
 *'output':  [estatusAire, estatuSuelo]* 
 
-
-*Despues*
+*Phaser-3balas*
 *Input' :  [despBala1 , velocidadBala1,despBala2 , velocidadBala2 ,despBala3 , velocidadBala3],*
 *'output':  [estatusAire, estatuSuelo, estatusIzquierda, estatusDerecha, estatusQuieto]* 
 
-Como se puede ver, se agregaron muchas mas variables, tanto de entrada como de salida, esto causa una modificacion en la hora de definir la red neuronal:
+*Phaser-3balas*
+*Input' :  [dx, dy , distancia],*
+*'output':  [estatusIzquierda, estatusDerecha, estatusArriba, estatusAbajo, estatusQuieto]* 
 
-*Antes*
+Ahora explicaremos las entradas:
+
+dx : saber las coordenadas en X respecto al jugador
+dy : saber las coordenadas en Y respecto al jugador
+distancia : formula para medir la distancia euclidiana
+
+*var dx = bala.x - jugador.x;*
+*var dy =  jugador.y - bala.y;*
+*var distancia = Math.sqrt(dx * dx + dy * dy);*
+
+
+# Modificación de red neuronal #
+
+Al igual que el modelo anterior, se modifico en la forma como se entrena la red neuronal, tanto extradas, capas ocultas y salidas:
+
+*Original*
 *nnNetwork =  new synaptic.Architect.Perceptron(2,3,3,2);*
 
 
-*Despues*
+*Phaser-3balas*
 *nnNetwork =  new synaptic.Architect.Perceptron(6,5,5,5);*
 
-Lo que en pocas palabras es:
--6 entradas
--5 neuronas en la primer capa oculta
--5 neuronas en la segunda capa oculta
--5 salidas
+*Phaser-3balas*
+*nnNetwork =  new synaptic.Architect.Perceptron(3,6,6,6);*
 
-Esto define el modo de entrenamiento, al igual la red de entrenamiento:
+
+Las diferencias ahora son:
+-3 entradas
+-6 neuronas en la primer capa oculta
+-6 neuronas en la segunda capa oculta
+-6 salidas
+
+El modo de entrenamiento sigue siendo igual que el phaser-3balas por lo que el entrenamiento queda :
 
 *function enRedNeural(){*
 *nnEntrenamiento.train(datosEntrenamiento, {rate: 0.03, iterations: 10000, shuffle: true});*
@@ -51,35 +74,36 @@ La función anterior inicia el proceso de entrenamiento de la red neuronal utili
 Una vez que se entreno la red neuronal, se llama a la funcion dependiendo de las entradas y las salidas que desea como resultado de esa funcion, lo que se ideo para este nuevo ejercicio es que se crearon funciones:
 
 *Entrada*
--despBala1 , velocidadBala1
--despBala2 , velocidadBala2
--despBala3 , velocidadBala3
+- dx
+- dy
+- distancia
 
 *Salida*
--Izquierda o Quieto
--Derecha o Quieto
--Arriba o Suelo
+- estatusIzquierda
+- estatusDerecha
+- estatusArriba
+- estatusAbajo
+- estatusQuieto
 
 Este es un ejemplo de la función programada, que decide entre si ir a la izquierda o quedarse quieto.
 
 *function datosDeEntrenamiento(param_entrada){*
     *nnSalida = nnNetwork.activate(param_entrada);*
     *var der=Math.round( nnSalida[0]100 );*
-    *var qui=Math.round( nnSalida[2]100 );*
-    *return nnSalida[0]>=nnSalida[2];*
+    *var qui=Math.round( nnSalida[4]100 );*
+    *return nnSalida[0]>=nnSalida[4];*
 *}*
 
 
 Lo que genera mayor complejidad y dificultad en el juego, por lo que viendolo visualmente se ve asi:
 
-![Phaser - Esperando](./Images/phaser3.png)
+![Phaser - Esperando](./Images/phaser6.png)
 
-![Phaser - Esquivando](./Images/phaser4.png)
-
-![Phaser - Saltando](./Images/phaser5.png)
+![Phaser - Moviendose](./Images/phaser7.png)
 
 
-Si se desea revisar mas a profundidad el codigo, revise en la carpeta *archivos* y busque la caprte de *Phaser2*
+
+Si se desea revisar mas a profundidad el codigo, revise en la carpeta *archivos* y busque la caprte de *Phaser3*
 
 
 
